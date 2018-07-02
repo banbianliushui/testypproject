@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .container{
+            position:relative;
+            font-size:14px;
+        }
+        .head1{
+            position: absolute;
+            left: 60px;
+            width: 500px;
+            overflow: hidden;
+            height: 44px;
+            /* overflow-x: auto; */
+            background: #f5f6f7;
+        }
+        .head2 {
+            position: absolute;
+            top: 44px;
+            height: 210px;
+            overflow: hidden;
+            /* overflow-y: auto; */
+            background-color: #eaebeb;
+        }
+        .main{
+            position: absolute;
+            top: 44px;
+            left: 60px;
+            width: 520px;
+            height: 230px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .footer{
+            position: absolute;
+            bottom:0;
+            background: #f5f6f7;
+            height: 44px;
+            line-height: 44px;
+            width: 100%;
+        }
+        .hfirst {
+            position: absolute;
+            width: 60px;
+            height: 44px;
+            text-align: center;
+            line-height: 44px;
+            background-color: #eaebeb;
+        }
+        .h1-cell {
+            float: left;
+            width: 54px;
+            height: 44px;
+            line-height: 44px;
+        }
+        .h1-cell.expired{
+            color:#999999;
+        }
+        .h1-cell.expect{
+            /*color:@theme-color;*/
+
+        }
+        .h1-cell.now{
+            color:#FF5379;
+        }
+        .h2-container{
+        }
+        .h1-container{
+
+            margin-left:0px;
+            transition: margin-left 1s;
+            -moz-transition: margin-left 1s; /* Firefox 4 */
+            -webkit-transition: margin-left 1s; /* Safari 和 Chrome */
+            -o-transition: margin-left 1s; /* Opera */
+        }
+        .main-grid{
+            width: 100%;
+            height: 100%;
+        }
+        .main-container{
+            height: 720px;
+            position: relative;
+            margin-left:0px;
+            transition: margin-left 1s;
+            -moz-transition: margin-left 1s; /* Firefox 4 */
+            -webkit-transition: margin-left 1s; /* Safari 和 Chrome */
+            -o-transition: margin-left 1s; /* Opera */
+        }
+        .grid-col {
+            float: left;
+            width: 54px;
+            border-right: 1px solid #eee;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        .view-main-blocks {
+            position: absolute;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+        }
+        .view-block-row{
+            height: 80px;
+            box-sizing: border-box;
+            padding: 5px 0px;
+            position: relative;
+        }
+        .h2-cell {
+            height: 80px;
+            line-height: 80px;
+            width: 60px;
+            text-align: center;
+            border-top: 2px solid white;
+            box-sizing: border-box;
+        }
+        .view-block .appointtime {
+           /* border: 1px solid #29c3f8;*/
+            text-align: center;
+            margin-bottom: 10px;
+            height: 30px;
+            line-height: 30px;
+            position: absolute;
+            box-sizing: border-box;
+            background-color: #7ab0e9;
+        }
+        .view-block.appoint-block{
+            top:8px;
+        }
+        .view-block.work-block{
+            top:42px;
+        }
+        .view-block .worktime {
+           /* border: 1px solid orange;*/
+            background-color: #ffc96e;
+            text-align: center;
+            height: 30px;
+            line-height: 30px;
+            position: absolute;
+            box-sizing: border-box;
+        }
+        .view-block {
+            height: 30px;
+            line-height: 30px;
+            position: absolute;
+            color: white;
+        }
+        .block-inner-text{
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            padding: 0px 2px;
+        }
+        .clearfix{
+            *zoom:1;/*对于暂不支持:after伪类的IE6/IE7，可以使用IE私有的zoom缩放属性让div远离浮动的破坏。hasLayout */
+        }
+        .clearfix:after{
+            content:" "; /* 这个必须，这是和after配对使用的,不加这个，页面就不显示after相关的样式 */
+            height:0;/* 不让他有高度，影响实际需求，实际只要获得浮动元素的高度就可以了 */
+            display:block;/* 块级元素 */
+            clear: both;
+            visibility: hidden;/*如果 content 中有内容，content:"1111";不加hidden，content里面的内容会显示出来。  */
+        }
+        .h1-pagebtn {
+            position: absolute;
+            width: 54px;
+            line-height: 44px;
+            height: 44px;
+            right: 0;
+            top: 0;
+            background: #ccc;
+            color: white;
+            display: flex;
+            justify-content: center;
+        }
+        .page-btn{
+            flex: 1;
+            text-align: center;
+            cursor:pointer;
+        }
+        .page-prev {
+
+         }
+
+        .page-btn.active{
+            color:#FF5379;
+        }
+        .page-next {
+
+        }
+        .view-tag{
+            display: inline-block;
+            margin-left: 16px;
+        }
+        .appoint-tag{
+
+        }
+        .work-tag{
+
+        }
+        .appoint-icon{
+            width: 20px;
+            height: 20px;
+            background-color: #7ab0e9;
+            vertical-align: middle;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .work-icon{
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            background-color: #ffc96e;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="gatt">
+
+</div>
+<script>
+    var h1 =['8:30','9:00','9:30','10:00','10:30','11:00','11:30','12:00','12:30'
+        ,'13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00'
+        ,'17:30','18:00','18:30','19:00','19:30','20:00','20:30','21:00'
+        ,'21:30','22:00','']
+    var h2=[];
+    var data = [{name:'技师1',
+        appointlist:[{text:'buan',
+            start:new Date('2018','6','26','9','15').getTime(),end:new Date('2018','6','26','10','25').getTime()}],
+        worklist:[{text:'',
+            start:new Date('2018','6','26','9','30').getTime(),end:new Date('2018','6','26','11','30').getTime()}]
+    },
+        {name:'技师2',
+            appointlist:[{text:'套表预约',
+                start:new Date('2018','6','26','13','15').getTime(),end:new Date('2018','6','26','14','0').getTime()}],
+            worklist:[{text:'',
+                start:new Date('2018','6','26','12','30').getTime(),end:new Date('2018','6','26','14','30').getTime()}]
+        },
+      /*  {name:'技师3',
+            appointlist:[{text:'适合预约',
+                start:new Date('2018','6','26','10','15').getTime(),end:new Date('2018','6','26','12','0').getTime()}],
+            worklist:[{text:'',
+                start:new Date('2018','6','26','8','30').getTime(),end:new Date('2018','6','26','11','30').getTime()},
+                {text:'',
+                    start:new Date('2018','6','26','18','10').getTime(),end:new Date('2018','6','26','18','28').getTime()}]
+        },
+        {name:'技师4',
+            appointlist:[{text:'想通预约',
+                start:new Date('2018','6','26','9','15').getTime(),end:new Date('2018','6','26','10','0').getTime()}],
+            worklist:[{text:'',
+                start:new Date('2018','6','26','9','30').getTime(),end:new Date('2018','6','26','11','30').getTime()}]
+        },
+        {name:'技师5',
+            appointlist:[{text:'多步的预约',
+                start:new Date('2018','6','26','11','15').getTime(),end:new Date('2018','6','26','13','0').getTime()}],
+            worklist:[{text:'',
+                start:new Date('2018','6','26','9','30').getTime(),end:new Date('2018','6','26','11','30').getTime()},
+                {text:'',
+                    start:new Date('2018','6','26','12','30').getTime(),end:new Date('2018','6','26','14','30').getTime()},
+                {text:'',
+                    start:new Date('2018','6','26','19','30').getTime(),end:new Date('2018','6','26','21','30').getTime()}]
+        },
+        {name:'技师6',
+            appointlist:[{text:'感情预约',
+                start:new Date('2018','6','26','9','15').getTime(),end:new Date('2018','6','26','10','0').getTime()},
+                {text:'纯阳的预约',
+                    start:new Date('2018','6','26','11','15').getTime(),end:new Date('2018','6','26','13','0').getTime()}],
+            worklist:[{text:'',
+                start:new Date('2018','6','26','9','30').getTime(),end:new Date('2018','6','26','11','30').getTime()},
+                {text:'',
+                    start:new Date('2018','6','26','12','30').getTime(),end:new Date('2018','6','26','14','30').getTime()}]
+        },
+        {name:'技师7',
+            appointlist:[{text:'真的的预约',
+                start:new Date('2018','6','26','9','15').getTime(),end:new Date('2018','6','26','10','0').getTime()}],
+            worklist:[{text:'',
+                start:new Date('2018','6','26','9','30').getTime(),end:new Date('2018','6','26','11','30').getTime()}]
+        },
+        {name:'技师8',
+            appointlist:[{text:'关键的预约',
+                start:new Date('2018','6','26','10','15').getTime(),end:new Date('2018','6','26','12','0').getTime()}],
+            worklist:[{text:'',
+                start:new Date('2018','6','26','8','30').getTime(),end:new Date('2018','6','26','11','30').getTime()}]
+        },
+        {name:'技师9',
+            appointlist:[{text:'偶尔的预约',
+                start:new Date('2018','6','26','13','15').getTime(),end:new Date('2018','6','26','15','0').getTime()}],
+            worklist:[{text:'',
+                start:new Date('2018','6','26','13','30').getTime(),end:new Date('2018','6','26','15','0').getTime()}]
+        },*/
+    ]
+    function Gattn(options){
+        this.options = options ;
+        this.head1 =  options.head1;
+        this.head2 = options.head2?options.head2 : null;
+        this.data = options.data?options.data:[];
+        this.rootselector = options.el;
+        this.firstcellText = options.firstcellText;
+        this.$el = document.querySelector(options.el);
+        this.head2Field='name';//左侧标题在data中对应的域
+        this.cellWidth = 54
+        this.cellHeight = 80
+        this.firstCellWidth=60
+        this.firstCellHeight = 44
+        this.footerHeight = 44
+        this.width = 1086
+        this.height = 488
+        this.mainPaneWidth= this.width - this.firstCellWidth
+        this.mainPaneHeight= (this.height-this.firstCellHeight -this.footerHeight)
+        this.gattertimer=null
+        this.h1startIndex = 1;
+        this.h1endIndex =  Math.ceil((this.mainPaneWidth-1)/this.cellWidth )
+        this.pagesize=3;//一次翻页移动个数
+        this.isLessPage = this.data.length * this.cellHeight<this.mainPaneHeight;
+        this.searchDate = new Date(2018,5,26)
+        this.init()
+        this.bind()
+    }
+    Gattn.prototype.init = function(){
+        this.draw()
+        this.fixPagebtnCls()
+        this.refreshTimeLineCss()
+    }
+    Gattn.prototype.draw = function(){
+        var hd1 = '';
+        var gridcol='';
+        for(var i = 0;i<this.head1.length;i++){
+            hd1+='  <div class="h1-cell">'+this.head1[i]+'</div>';
+            gridcol+='<div class="grid-col "></div>';
+        }
+        var hd2 = '';
+        var rowh = '';
+        for(var i = 0;i<this.data.length;i++){
+            hd2 +='<div class="h2-cell">'+this.data[i].name+'</div>'
+            rowh +='<div class="view-block-row">';
+            var appl = this.data[i].appointlist;
+            var workl = this.data[i].worklist;
+            var appoinh = ''
+            var workh=''
+            for(var j = 0;j<appl.length;j++){
+                var waleft = this.getBlockWidth(appl[j].start,appl[j].end)
+                appoinh+= '<div class="appointtime" style="left:'+waleft.left+'px;width:'+waleft.width+'px;">' +
+                    '<div class="block-inner-text" title="'+appl[j].text+'">'+appl[j].text+'</div>'+
+                    '</div>'
+            }
+            appoinh='<div class="view-block appoint-block" >' +appoinh+
+                '</div>';
+            for(var j = 0;j<workl.length;j++){
+                var waleft = this.getBlockWidth(workl[j].start,workl[j].end)
+                workh+='<div class="worktime" style="left:'+waleft.left+'px;width:'+waleft.width+'px;">'+
+                    '<div>'+workl[j].text+'</div>'+
+                    '</div>'
+            }
+            workh='<div class="view-block work-block" >' +workh+
+                '</div>';
+            rowh=rowh+appoinh+workh +' </div>';
+        }
+        var h1width = this.head1.length * this.cellWidth;
+        var h2height = this.data.length * this.cellHeight;
+        var mainWH =  'style="width:'+h1width+'px;height:'+(h2height<this.mainPaneHeight?this.mainPaneHeight:h2height)+'px"';
+        h1width = 'style="width:'+h1width+'px"';
+        h2height = 'style="height:'+h2height+'px"';
+        var h = ' <div class="hfirst">'+(this.firstcellText==null?'':this.firstcellText)+'</div>' +
+            ' <div class="head1" style="width:'+this.mainPaneWidth+'px;">' +
+            '   <div class="h1-container clearfix" '+h1width+'>' +hd1+
+            '   </div>' +
+
+            '</div>' +
+            '   <div class="h1-pagebtn"><span class="page-btn  page-prev"><</span><span class="page-btn page-next">></span></div>' +
+            '<div class="head2" style="height:'+this.mainPaneHeight+'px;">' +
+            '   <div class="h2-container"'+h2height+'>'+hd2+
+            '   </div>' +
+            '</div>' +
+            '<div class="main" style="height:'+this.mainPaneHeight+'px;width:'+(this.mainPaneWidth)+'px;" >' +
+            '   <div class="main-container" '+mainWH+'>' +
+            '       <div class="main-grid" '+'>' +gridcol+
+            '       </div>' +
+            '       <div class="view-main-blocks" '+'>' +rowh+
+            '       </div>' +
+            '   </div>' +
+            '</div>' +
+            ' <div class="footer">' +
+            '   <div class="view-tag appoint-tag"><i class="appoint-icon"></i><span>客户预约时间</span></div>' +
+            '   <div class="view-tag work-tag"><i class="work-icon"></i><span>技师工作时间</span></div>' +
+            '</div>';
+        this.$el.style='width:'+this.width+'px;height:'+this.height+'px;';
+        this.$el.innerHTML=h;
+    }
+    Gattn.prototype.refreshTimeLineCss = function(){
+        var k = this.getHead1NowTimeNum()
+        let h1cells =  this.$el.querySelectorAll('.h1-container .h1-cell');
+        for(var i = 0;i<h1cells.length;i++){
+            if(i<k){
+               this.addClass([h1cells[i]],'expired')
+            }else if(i==k){
+                this.addClass([h1cells[i]],'now')
+            }else{
+
+            }
+        }
+    }
+    Gattn.prototype.getHead1NowTimeNum = function(){
+        //返回当前时间对应第几个，是否提供到达时间点自动刷新时间轴颜色
+        var now = new Date();
+        var k =-1;
+        if(this.searchDate.getFullYear() == now.getFullYear()
+            &&this.searchDate.getMonth()==now.getMonth()
+        &&this.searchDate.getDate()==now.getDate()){ //当天数据
+
+            for(var i = 0;i<this.head1.length;i++){
+                var htime = this.head1[i];
+                var h =  htime.split(":");
+                if(h&&now.getHours() == Number(h[0])&&Number(h[1])<= now.getMinutes()){
+
+                        k=i;
+                        var ntime = i+1<this.head1.length?this.head1[i+1]:"";
+                        var nh = ntime.split(":");
+                        if(nh&&now.getHours() == Number(nh[0])&&Number(nh[1])<= now.getMinutes()){
+                            k=i+1;
+                        }
+
+                        break;
+
+                }
+            }
+
+        }else if(this.searchDate.getTime()<new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime()){//至少前一天，过期数据
+            k = this.head1.length;
+        }else{//将来数据
+
+        }
+        return k;
+    }
+
+    Gattn.prototype.fixPagebtnCls = function(){
+        let prevbtn =  this.$el.querySelector('.page-prev');
+        let nextbtn =  this.$el.querySelector('.page-next');
+        if(this.h1startIndex>1){
+
+            this.addClass([prevbtn],'active')
+
+        }else{
+            this.removeClass([prevbtn],'active')
+        }
+        if(this.h1endIndex<this.head1.length){
+
+            this.addClass([nextbtn],'active')
+
+        }else{
+            this.removeClass([nextbtn],'active')
+        }
+    }
+    Gattn.prototype.removeClass= function(nodes,newcls){
+
+
+        for(var i =0;i<nodes.length;i++){
+            var node = nodes[i];
+            var oldCls = node.className;
+            var cls = oldCls.split(' ');
+            oldCls =[];
+            for(var i=0;i<cls.length;i++){
+                if(cls[i]!=""&& newcls != cls[i]){
+                    oldCls.push(cls[i])
+                }
+            }
+            node.className =oldCls.join(' ');
+        }
+
+
+    }
+    Gattn.prototype.addClass= function(nodes,newcls){
+
+
+        for(var i =0;i<nodes.length;i++){
+            var node = nodes[i];
+            var oldCls = node.className;
+            var cls = oldCls.split(' ');
+            oldCls =[];
+            for(var i=0;i<cls.length;i++){
+                if(cls[i]!=""&& newcls != cls[i]){
+                    oldCls.push(cls[i])
+                }
+            }
+            oldCls.push(newcls)
+            node.className =oldCls.join(' ');
+        }
+
+
+    }
+    Gattn.prototype.getBlockWidth = function(start,end){
+        var timelist = this.head1;
+        var ndate = new Date(start);
+        // var edate = new Date(end);
+        var y = ndate.getFullYear()
+        var m = ndate.getMonth()
+        var d = ndate.getDate()
+        var left = 0
+        var isFirst = true
+        var isEndFirst = true
+        var lstleft =0;
+        var num = 0;
+        var leftnum = 0;
+        var startp = 0
+        var endp = 0
+        for(var i = 0;i<timelist.length;i++){
+            var t = timelist[i].split(':');
+            var c= new Date(y,m,d,t[0],t[1])
+            if(start<=c.getTime()&&isFirst){
+                if(start<c.getTime()){
+                    var prev = timelist[i-1].split(':');
+                    var p= new Date(y,m,d,prev[0],prev[1])
+                    left +=   (start-p) /(c-p) * this.cellWidth
+                    leftnum>0?leftnum--:'';
+                    startp = p
+                }else{
+                    startp = start
+                    left=0;
+                }
+                isFirst = false;
+            }
+            if(end<=c.getTime()){//结束
+                if(end<c.getTime()){
+                    var prev = timelist[i-1].split(':');
+                    var p= new Date(y,m,d,prev[0],prev[1])
+                    lstleft =   (end-p) /(c-p) * this.cellWidth
+                    endp = p.getTime()
+                }else{
+                    endp = end
+                        num++;
+                    lstleft = 0;
+                }
+                isEndFirst = false
+                break;
+            }
+            if(start>c.getTime()&&isFirst){
+                leftnum++;
+            }
+            if(c.getTime()>start&&c.getTime()<end&&!isFirst){
+                num++;
+            }
+        }
+
+var w =  (startp==endp&&endp!=0)?num*this.cellWidth+(this.cellWidth-left)+lstleft
+    :num*this.cellWidth+lstleft-(this.cellWidth-left)
+        return {left:left+leftnum*this.cellWidth,width:w}
+    }
+    //
+    Gattn.prototype.hasClass = function (node,className){
+       if(!node ){
+           return null;
+       }
+        if (node.getAttribute('class')) {  // 存在class属性
+            // 方式1
+            /*if (node.getAttribute('class').indexOf('test') > -1) {
+                console.log('包含 test 这个class');
+            }*/
+
+            // 方式2
+            if (node.className.indexOf(className) > -1) {
+
+                return true
+            }
+        }
+return false
+    }
+    Gattn.prototype.prev = function(){
+        var p = 0;
+        var ml = 0;
+       if( this.h1startIndex>1){
+            p = (this.h1startIndex-this.pagesize)>0?this.pagesize:this.h1startIndex-1
+           this.h1startIndex = this.h1startIndex - p
+           this.h1endIndex = this.h1endIndex - p
+       }
+       if(p>0){
+            ml = (this.h1startIndex-1)* this.cellWidth;
+            this.slide(ml)
+       }else{
+           return;
+       }
+
+
+    }
+    Gattn.prototype.next = function(){
+        var p = 0;
+        var ml = 0;
+        if( this.h1endIndex<this.head1.length){
+            p = (this.h1endIndex+this.pagesize)<this.head1.length?this.pagesize:this.head1.length-this.h1endIndex
+            this.h1endIndex = this.h1endIndex + p
+            this.h1startIndex = this.h1startIndex + p
+        }
+        if(p>0){
+            ml = (this.h1startIndex-1)* this.cellWidth;
+            this.slide(ml)
+        }else{
+            return;
+        }
+
+
+    }
+    Gattn.prototype.slide = function(ml){
+        var oldstyle = this.$el.querySelector('.h1-container').style.cssText;
+        this.$el.querySelector('.h1-container').style.cssText=this.getNewStyle(oldstyle==null?'':oldstyle,'margin-left','-'+ml+'px')
+        oldstyle = this.$el.querySelector('.main-container').style.cssText;
+        this.$el.querySelector('.main-container').style.cssText=this.getNewStyle(oldstyle==null?'':oldstyle,'margin-left','-'+ml+'px')
+        this.fixPagebtnCls()
+
+    }
+    Gattn.prototype.getNewStyle = function(oldstyle,newstylename,newstylevalue){
+
+        var mlindex=-1
+        mlindex = oldstyle.indexOf(newstylename)
+        var index = -1
+        if(mlindex!=-1){
+            index = oldstyle.indexOf(';',mlindex)
+            if(index==-1){
+                index = oldstyle.length-1
+            }
+            oldstyle = oldstyle.replace(oldstyle.substring(mlindex,index+1),'')
+        }
+        oldstyle = oldstyle+((oldstyle!=null&&oldstyle!='')&&oldstyle.substring(oldstyle.length-1)!=';'?';':'')+newstylename+":"+newstylevalue+";"
+        return oldstyle
+    }
+    Gattn.prototype.bind = function(){
+        var that = this;
+        this.$el.querySelector('.main').addEventListener('scroll',function(e){
+            /*window.clearInterval(that.gattertimer);
+            that.gattertimer = setInterval(function(){
+                window.clearInterval(that.gattertimer);*/
+                var el = e.currentTarget==null?e.srcElement: e.currentTarget;
+                var h2container =  document.querySelector(".head2")
+                var h1container = document.querySelector(".head1")
+                h2container.scrollTop =   el.scrollTop
+                h1container.scrollLeft =   el.scrollLeft
+                console.log(' el.scrollTop =', el.scrollTop)
+                console.log(' h2container.scrollTop =', h2container.scrollTop)
+           /* },10)*/
+        })
+
+        this.$el.querySelector('.h1-pagebtn').addEventListener('click',function(e){
+            var $pagebtn = e.target==null?e.srcElement: e.target;
+
+            if(that.hasClass($pagebtn,'page-prev')){
+                that.prev()
+            }else{
+                that.next()
+            }
+          //  $pagebtn
+
+        })
+
+    }
+    new Gattn({
+        el:'#gatt',
+        data:data,
+        head1:h1,
+        firstcellText:'技师',
+        head2Field:'name'
+    })
+</script>
+
+</body>
+</html>
