@@ -1,6 +1,4 @@
-git text insert
+text insert
 another line
-dj
 
-second add message
-
+change after checkout 
