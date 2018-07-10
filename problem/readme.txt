@@ -1,4 +1,6 @@
-shur ru
-shuru
-xxxwq
+git text insert
+another line
+dj
+
+second add message
 
